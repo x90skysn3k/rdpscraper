@@ -279,7 +279,7 @@ def parse_args():
 
     menu_group = parser.add_argument_group(colors.lightblue + 'Menu Options' + colors.normal)
     
-    menu_group.add_argument('-f', '--file', help="GNMAP or XML file to parse", required=False)
+    menu_group.add_argument('-f', '--file', help="GNMAP or XML file to parse", required=True)
     
    
     args = parser.parse_args()
