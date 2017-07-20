@@ -103,7 +103,7 @@ def make_dic_xml():
                     services[name] = {tmp_port:iplist}
 
 # set log level
-log._LOG_LEVEL = log.Level.INFO
+log._LOG_LEVEL = log.Level.WARNING
 
 
 class RDPScreenShotFactory(rdp.ClientFactory):
@@ -287,6 +287,7 @@ width = 3072
 height = 1536
 path = "tmp/"
 timeout = 5.0
+bitsPerPixel = 24
 
 try:
     doc = xml.dom.minidom.parse(args.file)
@@ -324,17 +325,22 @@ with open(fname, 'r') as fn:
     for fns in fn:
         ip, port = fns.split(':')
         img = Image.open('tmp/' + ip +'.jpg')
-       # img = Image.open('tmp/' + ip +'.jpg').convert('L')
+        #img = Image.open('tmp/' + ip +'.jpg').convert('L')
         img = img.resize([int(2.4 * s) for s in img.size])
                 #print('after resize')
         enhancer = ImageEnhance.Sharpness(img)
-        img = enhancer.enhance(0.0)
+        #enhancer = ImageEnhance.Contrast(img)
+        img = enhancer.enhance(0.7)
+        contrast = ImageEnhance.Contrast(img)
+        img = contrast.enhance(0.9)       
+#        img.save("tmp/test","jpeg") 
 #enhancer = ImageEnhance.Sharpness(img)
 #img = enhancer.enhance(0.8)
 #img.save('tmp.jpg')
 #enhancer = ImageEnhance.Sharpness(img)
 #img = enhancer.enhance(0.0)
 #img.save('tmp.jpg')
+        print "ip address: " + ip + "\n"
         print(pytesseract.image_to_string(img))
         print "------------------------------------------------------------------------------------------------------------\n"
 
