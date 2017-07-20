@@ -52,6 +52,8 @@ def make_dic_gnmap():
                                 services[name][tmp_port] = ip
                         else:
                             services[name] = {tmp_port:ip}
+
+
 def make_dic_xml():
     global loading
     global services
@@ -302,6 +304,8 @@ try:
     make_dic_xml()
 except:
     make_dic_gnmap()
+if services is None:
+    sys.exit(0)
 
 t = threading.Thread(target=loading)
 t.start()
@@ -359,13 +363,19 @@ with open(fname, 'r') as fn:
             img = enhancer.enhance(0.7)
             contrast = ImageEnhance.Contrast(img)
             img = contrast.enhance(0.9)       
+            #color = ImageEnhance.Color(img)
+            #img = color.enhance(0.)
             print(pytesseract.image_to_string(img))
             print "------------------------------------------------------------------------------------------------------------\n"
         else:
             img = img.resize([int(2.2 * s) for s in img.size])
             enhancer = ImageEnhance.Sharpness(img)
-            img = enhancer.enhance(0.21)
+            img = enhancer.enhance(0.2)
+            color = ImageEnhance.Color(img)
+            img = color.enhance(0)
+            #bright = ImageEnhance.Brightness(img)
+            #img = bright.enhance(0.5)
             #contrast = ImageEnhance.Contrast(img)
-            #img = contrast.enhance(0.9)       
+            #img = contrast.enhance(0.2)       
             print(pytesseract.image_to_string(img))
             print "------------------------------------------------------------------------------------------------------------\n"
