@@ -4,7 +4,12 @@ Created by: Steven Laura/@steven1664 && Jacob Robles/@shellfail && Shane Young/@
 
 #### Version - 0.1
 
+# Installation
+
+```pip install -r requirements.txt```
+
 # Usage
+
 First do an nmap scan with ```-oG nmap.gnmap``` or ```-oX nmap.xml```.
 
 Command: ```./rdpscraper.py --file nmap.gnmap```
