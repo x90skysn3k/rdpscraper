@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-import sys, os
+import sys, time, os
 import re
 import argparse
 import xml.dom.minidom
@@ -15,9 +15,8 @@ from rdpy.ui.qt4 import RDPBitmapToQtImage
 import rdpy.core.log as log
 from rdpy.core.error import RDPSecurityNegoFail
 from twisted.internet import task
-
-
-
+import threading
+import itertools
 
 
 class colors:
@@ -101,6 +100,14 @@ def make_dic_xml():
                         services[name][tmp_port] = iplist
                 else:
                     services[name] = {tmp_port:iplist}
+
+def loading():
+    for c in itertools.cycle(['|', '/', '-', '\\']):
+        if loading == True:
+            break
+        sys.stdout.write('\rTaking Screenshots Please Wait: ' + c)
+        sys.stdout.flush()
+        time.sleep(0.01)
 
 # set log level
 log._LOG_LEVEL = log.Level.WARNING
@@ -288,6 +295,7 @@ height = 1536
 path = "tmp/"
 timeout = 5.0
 bitsPerPixel = 24
+Loading = False
 
 try:
     doc = xml.dom.minidom.parse(args.file)
@@ -295,6 +303,8 @@ try:
 except:
     make_dic_gnmap()
 
+t = threading.Thread(target=loading)
+t.start()
 
 for service in services:
     for port in services[service]:
@@ -319,6 +329,7 @@ for service in services:
         for ip in iplist:
             print(ip)
 '''
+loading = True
 #im = ImageGrab.grab()
 #im2 = ImageGrab.grab_to_file('/root/Desktop/img22.png')
 with open(fname, 'r') as fn:
@@ -326,13 +337,13 @@ with open(fname, 'r') as fn:
         ip, port = fns.split(':')
         img = Image.open('tmp/' + ip +'.jpg')
         #img = Image.open('tmp/' + ip +'.jpg').convert('L')
-        img = img.resize([int(2.4 * s) for s in img.size])
+#        img = img.resize([int(2.4 * s) for s in img.size])
                 #print('after resize')
-        enhancer = ImageEnhance.Sharpness(img)
+#        enhancer = ImageEnhance.Sharpness(img)
         #enhancer = ImageEnhance.Contrast(img)
-        img = enhancer.enhance(0.7)
-        contrast = ImageEnhance.Contrast(img)
-        img = contrast.enhance(0.9)       
+#        img = enhancer.enhance(0.7)
+#        contrast = ImageEnhance.Contrast(img)
+#        img = contrast.enhance(0.9)       
 #        img.save("tmp/test","jpeg") 
 #enhancer = ImageEnhance.Sharpness(img)
 #img = enhancer.enhance(0.8)
@@ -340,7 +351,21 @@ with open(fname, 'r') as fn:
 #enhancer = ImageEnhance.Sharpness(img)
 #img = enhancer.enhance(0.0)
 #img.save('tmp.jpg')
-        print "ip address: " + ip + "\n"
-        print(pytesseract.image_to_string(img))
-        print "------------------------------------------------------------------------------------------------------------\n"
-
+        print "\nip address: " + ip + "\n"
+        string = pytesseract.image_to_string(img)
+        if '2012' in string:
+            img = img.resize([int(2.4 * s) for s in img.size])
+            enhancer = ImageEnhance.Sharpness(img)
+            img = enhancer.enhance(0.7)
+            contrast = ImageEnhance.Contrast(img)
+            img = contrast.enhance(0.9)       
+            print(pytesseract.image_to_string(img))
+            print "------------------------------------------------------------------------------------------------------------\n"
+        else:
+            img = img.resize([int(2.2 * s) for s in img.size])
+            enhancer = ImageEnhance.Sharpness(img)
+            img = enhancer.enhance(0.21)
+            #contrast = ImageEnhance.Contrast(img)
+            #img = contrast.enhance(0.9)       
+            print(pytesseract.image_to_string(img))
+            print "------------------------------------------------------------------------------------------------------------\n"
