@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 import sys, time, os
+import tempfile
 import re
 import argparse
 import xml.dom.minidom
@@ -28,6 +30,21 @@ class colors:
     lightblue = "\033[0;34m"
 
 services = {}
+
+banner = colors.red + r"""
+
+   ▄████████ ████████▄     ▄███████▄        ▄████████  ▄████████    ▄████████    ▄████████    ▄███████▄    ▄████████    ▄████████ 
+  ███    ███ ███   ▀███   ███    ███       ███    ███ ███    ███   ███    ███   ███    ███   ███    ███   ███    ███   ███    ███ 
+  ███    ███ ███    ███   ███    ███       ███    █▀  ███    █▀    ███    ███   ███    ███   ███    ███   ███    █▀    ███    ███ 
+ ▄███▄▄▄▄██▀ ███    ███   ███    ███       ███        ███         ▄███▄▄▄▄██▀   ███    ███   ███    ███  ▄███▄▄▄      ▄███▄▄▄▄██▀ 
+▀▀███▀▀▀▀▀   ███    ███ ▀█████████▀      ▀███████████ ███        ▀▀███▀▀▀▀▀   ▀███████████ ▀█████████▀  ▀▀███▀▀▀     ▀▀███▀▀▀▀▀   
+▀███████████ ███    ███   ███                     ███ ███    █▄  ▀███████████   ███    ███   ███          ███    █▄  ▀███████████ 
+  ███    ███ ███   ▄███   ███               ▄█    ███ ███    ███   ███    ███   ███    ███   ███          ███    ███   ███    ███ 
+  ███    ███ ████████▀   ▄████▀           ▄████████▀  ████████▀    ███    ███   ███    █▀   ▄████▀        ██████████   ███    ███ 
+  ███    ███                                                       ███    ███                                          ███    ███ 
+"""+'\n' \
++ '\n rdpscraper.py v0.1'\
++ '\n Created by: Steven Laura/@steven1664 && Jacob Robles/@shellfail && Shane Young/@x90skysn3k\n' + colors.normal
 
 def make_dic_gnmap():
     global services
@@ -260,7 +277,8 @@ def main(width, height, path, timeout):
         for ips in f:
             if ':' in ips:
                 ip, port = ips.split(':')
-    
+            
+            print "\nTaking Screenshot for: " + ip
             reactor.connectTCP(ip, int(port), RDPScreenShotFactory(reactor, app, width, height, path + "%s.jpg" % ip, timeout))
 
         reactor.runReturn()
@@ -275,7 +293,7 @@ def parse_args():
     
     parser = argparse.ArgumentParser(description=\
  
-    "Usage: python brutemap.py <OPTIONS> \n")
+    "Usage: python rdpscraper.py <OPTIONS> \n")
 
     menu_group = parser.add_argument_group(colors.lightblue + 'Menu Options' + colors.normal)
     
@@ -286,16 +304,21 @@ def parse_args():
     
     return args
 
+print(banner)
+
 args = parse_args()
 
-if not os.path.exists("tmp/"):
-    os.mkdir("tmp/")
-tmppath = "tmp/"
+
+try:
+    tmppath = tempfile.mkdtemp(prefix="rdpscraper-tmp")
+except:
+    sys.stderr.write("\nError while creating rdpscaper temp directory.")
+    exit(4)
 
 width = 3072
 height = 1536
-path = "tmp/"
-timeout = 5.0
+path = tmppath + "/"
+timeout = 10.0
 bitsPerPixel = 24
 Loading = False
 
@@ -312,7 +335,7 @@ t.start()
 
 for service in services:
     for port in services[service]:
-        fname = 'tmp/'+service + '-' + port
+        fname = tmppath + "/" + service + '-' + port
         iplist = services[service][port]
         f = open(fname, 'w+')
         for ip in iplist:
@@ -320,42 +343,25 @@ for service in services:
         f.close()
 
 main(width, height, path, timeout)
-'''
-try:
-    doc = xml.dom.minidom.parse(args.file)
-    make_dic_xml()
-except:
-    make_dic_gnmap()
 
-for service in services:
-    for port in services[service]:
-        iplist = services[service][port]
-        for ip in iplist:
-            print(ip)
-'''
+outputpath = "rdpscraper-output/"
+if not os.path.exists(outputpath):
+    os.mkdir(outputpath)
+
+
 loading = True
-#im = ImageGrab.grab()
-#im2 = ImageGrab.grab_to_file('/root/Desktop/img22.png')
+
 with open(fname, 'r') as fn:
     for fns in fn:
         ip, port = fns.split(':')
-        img = Image.open('tmp/' + ip +'.jpg')
-        #img = Image.open('tmp/' + ip +'.jpg').convert('L')
-#        img = img.resize([int(2.4 * s) for s in img.size])
-                #print('after resize')
-#        enhancer = ImageEnhance.Sharpness(img)
-        #enhancer = ImageEnhance.Contrast(img)
-#        img = enhancer.enhance(0.7)
-#        contrast = ImageEnhance.Contrast(img)
-#        img = contrast.enhance(0.9)       
-#        img.save("tmp/test","jpeg") 
-#enhancer = ImageEnhance.Sharpness(img)
-#img = enhancer.enhance(0.8)
-#img.save('tmp.jpg')
-#enhancer = ImageEnhance.Sharpness(img)
-#img = enhancer.enhance(0.0)
-#img.save('tmp.jpg')
+
+        if not os.path.exists(tmppath + "/" + ip +'.jpg'):
+            print "\nScreenshot Unsuccessful for " + ip
+            continue
+
+        img = Image.open(tmppath + "/" + ip +'.jpg')
         print "\nip address: " + ip + "\n"
+        regex = re.compile(r'^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$')
         string = pytesseract.image_to_string(img)
         if '2012' in string:
             img = img.resize([int(2.4 * s) for s in img.size])
@@ -365,8 +371,13 @@ with open(fname, 'r') as fn:
             img = contrast.enhance(0.9)       
             #color = ImageEnhance.Color(img)
             #img = color.enhance(0.)
-            print(pytesseract.image_to_string(img))
-            print "------------------------------------------------------------------------------------------------------------\n"
+            string = pytesseract.image_to_string(img)
+            #    output = "test.txt"
+            #    with open(output, 'w+') as f:
+            #        for line in string:
+            #            f.write('\n'.join(line))
+            #            f.write('\n')
+                #print "found"       
         else:
             img = img.resize([int(2.2 * s) for s in img.size])
             enhancer = ImageEnhance.Sharpness(img)
@@ -376,6 +387,18 @@ with open(fname, 'r') as fn:
             #bright = ImageEnhance.Brightness(img)
             #img = bright.enhance(0.5)
             #contrast = ImageEnhance.Contrast(img)
-            #img = contrast.enhance(0.2)       
-            print(pytesseract.image_to_string(img))
-            print "------------------------------------------------------------------------------------------------------------\n"
+            #img = contrast.enhance(0.2)
+            string = pytesseract.image_to_string(img)
+                #output = "test.txt"
+                #with open(output, 'w+') as f:
+                #    for line in string:
+                #        f.write('\n'.join(line))
+                #        f.write('\n')
+                #print "found"
+        #print(pytesseract.image_to_string(img))
+        #print "------------------------------------------------------------------------------------------------------------\n"
+        output = pytesseract.image_to_string(img)
+        print output
+        f = open(outputpath + "output-" + ip + ".txt", 'w+')
+        f.write(output + '\n')
+    f.close()
