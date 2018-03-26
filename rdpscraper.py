@@ -417,19 +417,25 @@ with open(fname, 'r') as fn:
  
 with open(fname, 'r') as fn:
     username = []
+    exclude = ['Server','Standard','Logged','Windows', 'Update', 'Important', 'updates', 'are', 'available', 'Go', 'to', 'PC', 'settings', 'install', 'them']
     for fns in fn:
         ip, port = fns.split(':')
         if not os.path.exists(tmppath + "/" + ip +'.jpg'):
             continue
+    #    try:
         f = open(outputpath + "output-" + ip + ".txt").read().split()
+     #   except:
+      #      continue
         for line in f:
-             if "Windows" in line or "Standard" in line:
+             if any(s in line for s in exclude):
+                if 'administrator' in line or 'Administrator' in line:
+                    username.append(line)
                 continue
              else: 
                 if "\\" in line:
                     #print '\n' + line
                     username.append(line)
-                if re.match(r'^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){5,18}[a-zA-Z0-9]$', line):
+                if re.match(r'^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$', line):
                     #print '\n' + line
                     username.append(line)
     
