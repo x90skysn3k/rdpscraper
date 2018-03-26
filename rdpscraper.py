@@ -43,7 +43,7 @@ banner = colors.red + r"""
   ███    ███ ████████▀   ▄████▀           ▄████████▀  ████████▀    ███    ███   ███    █▀   ▄████▀        ██████████   ███    ███ 
   ███    ███                                                       ███    ███                                          ███    ███ 
 """+'\n' \
-+ '\n rdpscraper.py v0.1'\
++ '\n rdpscraper.py v0.2'\
 + '\n Created by: Steven Laura/@steven1664 && Jacob Robles/@shellfail && Shane Young/@x90skysn3k\n' + colors.normal
 
 def make_dic_gnmap():
@@ -298,6 +298,8 @@ def parse_args():
     menu_group = parser.add_argument_group(colors.lightblue + 'Menu Options' + colors.normal)
     
     menu_group.add_argument('-f', '--file', help="GNMAP or XML file to parse", required=True)
+    menu_group.add_argument('-o', '--output', help="specifiy output direcotry", default="rdpscraper-output")
+    menu_group.add_argument('-v', '--verbose', help="show screenshot output while running", default=False, action='store_true')
     
    
     args = parser.parse_args()
@@ -344,7 +346,7 @@ for service in services:
 
 main(width, height, path, timeout)
 
-outputpath = "rdpscraper-output/"
+outputpath = args.output + "/"
 if not os.path.exists(outputpath):
     os.mkdir(outputpath)
 
@@ -354,14 +356,12 @@ loading = True
 with open(fname, 'r') as fn:
     for fns in fn:
         ip, port = fns.split(':')
-
+        output = None
         if not os.path.exists(tmppath + "/" + ip +'.jpg'):
             print "\nScreenshot Unsuccessful for " + ip
             continue
 
         img = Image.open(tmppath + "/" + ip +'.jpg')
-        print "\nip address: " + ip + "\n"
-        regex = re.compile(r'^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$')
         string = pytesseract.image_to_string(img)
         if '2012' in string:
             img = img.resize([int(2.4 * s) for s in img.size])
@@ -398,7 +398,45 @@ with open(fname, 'r') as fn:
         #print(pytesseract.image_to_string(img))
         #print "------------------------------------------------------------------------------------------------------------\n"
         output = pytesseract.image_to_string(img)
-        print output
-        f = open(outputpath + "output-" + ip + ".txt", 'w+')
-        f.write(output + '\n')
-    f.close()
+    
+        if args.verbose is True:
+            print "\nIP Address: " + ip + ":\n\n"
+            print output
+            print "-----------------------------------------------------------------------------\n"
+        if output:
+            f = open(outputpath + "output-" + ip + ".txt", 'w+')
+            f.write(output + '\n')
+            f.close()
+        
+        try:
+            for line in f:
+                print line + '\n'
+        except:
+            continue
+   
+ 
+with open(fname, 'r') as fn:
+    username = []
+    for fns in fn:
+        ip, port = fns.split(':')
+        if not os.path.exists(tmppath + "/" + ip +'.jpg'):
+            continue
+        f = open(outputpath + "output-" + ip + ".txt").read().split()
+        for line in f:
+             if "Windows" in line or "Standard" in line:
+                continue
+             else: 
+                if "\\" in line:
+                    #print '\n' + line
+                    username.append(line)
+                if re.match(r'^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){5,18}[a-zA-Z0-9]$', line):
+                    #print '\n' + line
+                    username.append(line)
+    
+    outputfile = outputpath + args.file + "-usernames.txt"
+    
+    with open(outputfile, "w+") as u:
+        u.write('\n'.join(username))
+        u.write('\n')
+
+    print "\nUsername output written to: " + colors.green + outputfile + colors.normal

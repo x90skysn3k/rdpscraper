@@ -17,5 +17,9 @@ Command: ```./rdpscraper.py --file nmap.gnmap```
 Command: ```./rdpscraper.py --file nmap.xml```
 
 # Changelog
+* v0.2
+    * reading and writing through temp directories
+    * output text to directory
+    * tune image taking
 * v0.1
     * initial commit and code for screenshot and reading images
