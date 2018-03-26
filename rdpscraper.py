@@ -43,7 +43,7 @@ banner = colors.red + r"""
   ███    ███ ████████▀   ▄████▀           ▄████████▀  ████████▀    ███    ███   ███    █▀   ▄████▀        ██████████   ███    ███ 
   ███    ███                                                       ███    ███                                          ███    ███ 
 """+'\n' \
-+ '\n rdpscraper.py v0.3'\
++ '\n rdpscraper.py v0.4'\
 + '\n Created by: Steven Laura/@steven1664 && Jacob Robles/@shellfail && Shane Young/@x90skysn3k\n' + colors.normal
 
 def make_dic_gnmap():
@@ -422,10 +422,10 @@ with open(fname, 'r') as fn:
         ip, port = fns.split(':')
         if not os.path.exists(tmppath + "/" + ip +'.jpg'):
             continue
-    #    try:
-        f = open(outputpath + "output-" + ip + ".txt").read().split()
-     #   except:
-      #      continue
+        try:
+            f = open(outputpath + "output-" + ip + ".txt").read().split()
+        except:
+            continue
         for line in f:
              if any(s in line for s in exclude):
                 if 'administrator' in line or 'Administrator' in line:

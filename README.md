@@ -17,6 +17,9 @@ Command: ```./rdpscraper.py --file nmap.gnmap```
 Command: ```./rdpscraper.py --file nmap.xml```
 
 # Changelog
+* v0.4
+    * false positive workarounds
+    * fixed reading output
 * v0.3
     * write usernames to files (wip)
     * added output option
