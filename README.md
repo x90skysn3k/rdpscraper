@@ -17,6 +17,10 @@ Command: ```./rdpscraper.py --file nmap.gnmap```
 Command: ```./rdpscraper.py --file nmap.xml```
 
 # Changelog
+* v0.3
+    * write usernames to files (wip)
+    * added output option
+    * added verbosity option
 * v0.2
     * reading and writing through temp directories
     * output text to directory
