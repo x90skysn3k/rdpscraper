@@ -2,7 +2,7 @@
 
 Created by: Steven Laura/@steven1664 && Jacob Robles/@shellfail && Shane Young/@x90skysn3k
 
-#### Version - 0.1
+#### Version - 0.3
 
 # Installation
 

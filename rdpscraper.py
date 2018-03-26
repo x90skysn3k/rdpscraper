@@ -43,7 +43,7 @@ banner = colors.red + r"""
   ███    ███ ████████▀   ▄████▀           ▄████████▀  ████████▀    ███    ███   ███    █▀   ▄████▀        ██████████   ███    ███ 
   ███    ███                                                       ███    ███                                          ███    ███ 
 """+'\n' \
-+ '\n rdpscraper.py v0.2'\
++ '\n rdpscraper.py v0.3'\
 + '\n Created by: Steven Laura/@steven1664 && Jacob Robles/@shellfail && Shane Young/@x90skysn3k\n' + colors.normal
 
 def make_dic_gnmap():
