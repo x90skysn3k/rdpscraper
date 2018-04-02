@@ -417,7 +417,7 @@ with open(fname, 'r') as fn:
  
 with open(fname, 'r') as fn:
     username = []
-    exclude = ['Server','Standard','Logged','Windows', 'Update', 'Important', 'updates', 'are', 'available', 'Go', 'to', 'PC', 'settings', 'install', 'them']
+    exclude = ['Other','options','Server','Standard','Logged','Windows', 'Update', 'Important', 'updates', 'are', 'available', 'Go', 'to', 'PC', 'settings', 'install', 'them']
     for fns in fn:
         ip, port = fns.split(':')
         if not os.path.exists(tmppath + "/" + ip +'.jpg'):
