@@ -212,7 +212,7 @@ class RDPScreenShotFactory(rdp.ClientFactory):
                 self._buffer = QtGui.QImage(width, height, QtGui.QImage.Format_RGB32)
                 self._path = path
                 self._timeout = timeout
-                self._startTimeout = False
+                self._startTimeout = 5
                 self._reactor = reactor
 
             def onUpdate(self, destLeft, destTop, destRight, destBottom, width, height, bitsPerPixel, isCompress, data):
@@ -405,7 +405,10 @@ with open(fname, 'r') as fn:
             print "-----------------------------------------------------------------------------\n"
         if output:
             f = open(outputpath + "output-" + ip + ".txt", 'w+')
-            f.write(output + '\n')
+            try:
+                f.write(output + '\n')
+            except:
+                continue
             f.close()
         
         try:
@@ -417,7 +420,7 @@ with open(fname, 'r') as fn:
  
 with open(fname, 'r') as fn:
     username = []
-    exclude = ['Other','options','Server','Standard','Logged','Windows', 'Update', 'Important', 'updates', 'are', 'available', 'Go', 'to', 'PC', 'settings', 'install', 'them']
+    exclude = ['Other','options','Server','Standard','Logged','Windows', 'Update', 'Important', 'updates', 'are', 'available', 'Go', 'to', 'PC', 'settings', 'install', 'them','Professional','Cancel']
     for fns in fn:
         ip, port = fns.split(':')
         if not os.path.exists(tmppath + "/" + ip +'.jpg'):
@@ -442,7 +445,9 @@ with open(fname, 'r') as fn:
     outputfile = outputpath + args.file + "-usernames.txt"
     
     with open(outputfile, "w+") as u:
-        u.write('\n'.join(username))
+        finaluser = set(username)
+        u.write('\n'.join(finaluser))
+        #u.write('\n'.join(username))
         u.write('\n')
 
     print "\nUsername output written to: " + colors.green + outputfile + colors.normal
