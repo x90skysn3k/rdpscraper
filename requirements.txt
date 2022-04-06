@@ -1,6 +1,6 @@
 pyscreenshot==0.4.2
 pytesseract==0.1.7
-Twisted==17.9.0
+Twisted==22.2.0
 Pillow==5.0.0
 qt4reactor==1.6
 rdpy==1.3.2
